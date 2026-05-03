@@ -14,6 +14,14 @@ st.subheader("Análisis de Sentimiento con Arquitectura Dask")
 tab1, tab2 = st.tabs(["📊 Análisis del Dataset", "🔍 Probar Reseña Manual"])
 
 with tab1:
+    # Dentro de with tab1:
+    st.markdown("""
+    Esta aplicación utiliza el **Amazon Reviews Dataset**, un conjunto masivo de datos 
+    obtenido de [Kaggle](https://www.kaggle.com/datasets/dongrelaxman/amazon-reviews-dataset). 
+    El dataset incluye miles de registros con textos y calificaciones originales que permiten 
+    poner a prueba arquitecturas de procesamiento distribuido y minería de textos.
+    """)
+    
     if st.button("🚀 Ejecutar Procesamiento de Datos"):
         with st.spinner("Procesando 21,214 registros de forma distribuida..."):
             if not os.path.exists(RUTA_ARCHIVO):
