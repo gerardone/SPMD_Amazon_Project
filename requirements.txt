@@ -1,6 +1,6 @@
 streamlit
 pandas
 dask[complete]
-textblob
+vaderSentiment
 scikit-learn
 plotly
