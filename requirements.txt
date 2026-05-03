@@ -1,0 +1,6 @@
+streamlit
+pandas
+dask[complete]
+textblob
+scikit-learn
+plotly
