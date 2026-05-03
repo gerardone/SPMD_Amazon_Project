@@ -41,8 +41,20 @@ with tab1:
 
                     st.write("### Evaluación de Efectividad (Métricas)")
                     precision, tp, fp = procesador.calcular_metricas_calidad(RUTA_ARCHIVO)
-                    st.metric("Precisión del Modelo (Clase Negativa)", f"{precision:.2%}")
+                    st.metric("Precisión del Modelo (Clase Negativa)",  f"{precision:.2%}")
                     st.caption(f"Verdaderos Positivos: {tp} | Falsos Positivos: {fp}")  
+
+                    st.write("---")
+                    st.write("### 🎯 Evaluación de la Precisión (Métricas SPMD)")
+                    with st.status("Evaluando precisión contra Ratings reales...", expanded=False):
+                        precision, tp, fp = procesador.obtener_precision_modelo(RUTA_ARCHIVO)
+    
+                    if tp + fp > 0:
+                        col_m1, col_m2, col_m3 = st.columns(3)
+                        col_m1.metric("Precisión (Sent. Negativo)", f"{precision:.2%}")
+                        col_m2.metric("Verdaderos Negativos (TP)", tp)
+                        col_m3.metric("Falsos Negativos (FP)", fp)
+                        st.caption("Nota: Se considera 'Verdad Absoluta' las reseñas con 1 y 2 estrellas.") 
                 else:
                     st.error("Error al procesar el dataset.")
 
@@ -50,7 +62,7 @@ with tab2:
     st.write("### Simulador de Inferencia NLP")
     st.info("El modelo priorizará el lenguaje detectado (palabras como 'worst' o 'painful') sobre las estrellas.")
     
-    user_text = st.text_area("Pega el texto de alguna reseña de Amazon en inglésaquí:", height=150)
+    user_text = st.text_area("Pega el texto de alguna reseña de Amazon en inglés aquí:", height=150)
     # El rating ahora es opcional/informativo
     rating_opcional = st.selectbox("Calificación original (opcional):", [1, 2, 3, 4, 5], index=0)
     

@@ -108,3 +108,31 @@ def calcular_metricas_calidad(ruta_archivo):
         return precision, tp, fp
     except:
         return 0, 0, 0
+
+def obtener_precision_modelo(ruta_archivo):
+    """Calcula la precisión del modelo comparando contra el Rating original."""
+    try:
+        ddf = dd.read_csv(ruta_archivo, dtype={'Rating': 'object', 'Review Text': 'object'}, engine='python', on_bad_lines='skip')
+        ddf['Rating'] = ddf['Rating'].str.extract('(\d+)', expand=False).astype(float)
+
+        def clasificar_metrica(row):
+            rating_real = row['Rating']
+            # El modelo predice basándose en el texto
+            prediccion = analizar_sentimiento_texto(row['Review Text'], row['Rating'])
+            
+            # Caso Verdadero Positivo (TP): Es negativa y el modelo dijo negativa
+            if rating_real <= 2 and prediccion == "Negativo": return "TP"
+            # Caso Falso Positivo (FP): Es positiva (4-5) y el modelo dijo negativa
+            if rating_real >= 4 and prediccion == "Negativo": return "FP"
+            return "Otros"
+
+        conteo = ddf.map_partitions(lambda df: df.apply(clasificar_metrica, axis=1)).value_counts().compute()
+        
+        tp = conteo.get("TP", 0)
+        fp = conteo.get("FP", 0)
+        
+        precision = tp / (tp + fp) if (tp + fp) > 0 else 0
+        return precision, tp, fp
+    except Exception as e:
+        print(f"Error en métricas: {e}")
+        return 0, 0, 0
